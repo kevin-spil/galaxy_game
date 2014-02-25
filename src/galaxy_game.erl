@@ -62,11 +62,15 @@ teardown_universe(Planets) ->
 	lists:map(fun(Planet) -> 
 		case whereis(Planet) of
 			undefined -> ok;
-			_ -> Planet ! {self(),teardown},
-				receive
-					{_, dead} -> ok
-				after
-					5000 -> exit(timeout)
+			Pid ->
+			 	case is_process_alive(Pid) of
+			 		true -> Planet ! {self(),teardown},
+						receive
+							{_, dead} -> ok
+						after
+							5000 -> exit(timeout)
+						end;
+					false -> ok
 				end
 		end
 	end, Planets),
@@ -104,10 +108,10 @@ spawn_planet() ->
 			io:format("Got exit signal. ~n"),
 			From ! {self(), dead},
 			exit(kill);
-		{'EXIT', FROM, nuclear} ->
+		{'EXIT', _, nuclear} ->
 			io:format("Nuked :( ~n"),
 			exit(kill);
-		{'EXIT', From, Msg} ->
+		{'EXIT', _, Msg} ->
 			io:format("Received and ignored exit type ~p ~n", [Msg]);
 		{Msg, Arg} ->
 			io:format("Got unknown message: ~p with value: ~p ~n", [Msg, Arg]);
