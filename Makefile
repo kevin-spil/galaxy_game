@@ -3,6 +3,9 @@
 
 all: compile
 
+start:
+	erl -pa ebin/
+
 compile:
 	./rebar compile xref
 
