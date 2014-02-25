@@ -36,11 +36,19 @@
 -spec setup_universe([planet()], [shield()], [alliance()]) -> ok.
 %% @end
 setup_universe(Planets, Shields, Alliances) ->
-	lists:map(fun(Planet) -> PID = spawn(fun spawn_planet/0), register(Planet, PID)  end, Planets),
-	timer:sleep(100),
+	lists:map(fun(Planet) -> PID = spawn(fun() -> spawn_planet() end), register(Planet, PID)  end, Planets),
 	lists:map(fun(PlanetToShield) -> PlanetToShield ! {shield, true} end, Shields),
 	lists:map(fun(Alliance) -> {Planet1, Planet2} = Alliance, Planet1 ! {alliance, Planet2} end, Alliances),
-	timer:sleep(100),
+	
+	lists:map(fun(Planet) ->
+		Planet ! {self(), ping},
+		receive
+			{_, pong} -> ok
+		after
+			5000 -> exit(timeout)
+		end
+	end, Planets),
+
     ok.
 
 %% @doc Clean up a universe simulation.
@@ -54,10 +62,14 @@ teardown_universe(Planets) ->
 	lists:map(fun(Planet) -> 
 		case whereis(Planet) of
 			undefined -> ok;
-			_ -> exit(whereis(Planet), teardown)
+			_ -> Planet ! {self(),teardown},
+				receive
+					{_, dead} -> ok
+				after
+					5000 -> exit(timeout)
+				end
 		end
 	end, Planets),
-	timer:sleep(100),
     ok.
 
 %% @doc Simulate an attack.
@@ -68,7 +80,7 @@ teardown_universe(Planets) ->
 %% @end
 simulate_attack(Planets, Actions) ->
 	lists:map(fun(Action) -> {Attack, Planet} = Action, exit(whereis(Planet), Attack) end, Actions),
-	timer:sleep(1000),
+	timer:sleep(100),
 	Survivors = lists:foldl(
 		fun(Planet, Survivors) -> 
 			case whereis(Planet) of 
@@ -79,27 +91,27 @@ simulate_attack(Planets, Actions) ->
     lists:reverse(Survivors).
 
 spawn_planet() ->
-	%notify main process that planet exists.
 	receive
+		{Parent, ping} ->
+			Parent ! {self(), pong};
 		{shield, true} -> 
 			io:format("Got shield message! ~n"),
 			process_flag(trap_exit, true);
 		{alliance, Ally} ->
 			io:format("Got alliance message! ~n"),
 			link(whereis(Ally));
-		{'EXIT', From, teardown} ->
+		{From, teardown} ->
 			io:format("Got exit signal. ~n"),
+			From ! {self(), dead},
 			exit(kill);
 		{'EXIT', FROM, nuclear} ->
 			io:format("Nuked :( ~n"),
 			exit(kill);
 		{'EXIT', From, Msg} ->
-			io:format("Received exit type ~p ~n", [Msg]);
+			io:format("Received and ignored exit type ~p ~n", [Msg]);
 		{Msg, Arg} ->
 			io:format("Got unknown message: ~p with value: ~p ~n", [Msg, Arg]);
 		_ ->
 			io:format("Derp. ~n")
 	end,
-	%idle
-	spawn_planet(),
-	ok.
+	spawn_planet().
