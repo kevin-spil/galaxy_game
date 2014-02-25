@@ -7,7 +7,7 @@ galaxy_game_test_() ->
     S = [venus, earth],
     As = [{mercury, venus}, {venus, earth}],
     A = [{nuclear, venus}, {laser, earth}],
-    Exp = [earth, mars],
+    Exp = [mars],
     [
         {setup, 
             %Setup
@@ -32,9 +32,54 @@ galaxy_game_test_() ->
             fun (ok) -> galaxy_game:teardown_universe(P) end,
             %Tests
             fun (ok) -> [?_assertEqual(Exp, galaxy_game:simulate_attack(P, A))] end
+        },
+        {setup,
+            fun () -> galaxy_game:setup_universe(P, S, As) end,
+            fun (ok) -> ok end,
+            fun (ok) -> 
+                galaxy_game:teardown_universe(P),
+                [?_assertEqual(false, valid_planets(P))] end
+        },
+        {setup,
+            fun () -> galaxy_game:setup_universe([a], [], []) end,
+            fun (ok) -> ok end,
+            fun (ok) -> 
+                galaxy_game:teardown_universe([a]),
+                [?_assertEqual(false, valid_planets([a]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe([a,b], [a], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe([a,b]) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a], galaxy_game:simulate_attack([a,b], [{laser,a}, {laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe([a,b], [a], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe([a,b]) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([], galaxy_game:simulate_attack([a,b], [{nuclear,a}, {nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe([a,b,c], [b,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe([a,b,c]) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b], galaxy_game:simulate_attack([a,b,c], [{laser,a}, {laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe([a,b], [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe([a,b]) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b], galaxy_game:simulate_attack([a,b], [{nuclear,a}]))] end
         }
     ].
-
 
 %%==============================================================================
 %% Internal Functions
