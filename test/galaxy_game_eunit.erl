@@ -785,7 +785,10 @@ galaxy_game_alliance_two_shield_nuclear_test_() ->
         }
     ].
 galaxy_game_misc_test_() ->
-    P = [mercury,uranus,venus,earth],
+    P = [earth,mercury,uranus,venus],
+    MP = [a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,aa,bb,cc,dd,ee,ff,gg,hh,ii,jj,kk,ll,mm,nn,oo,pp,qq,rr,ss,tt,uu,vv,ww,xx,yy,zz],
+    MS = [a,d,y,c,aa,ee,oo,uu,ii],
+    MA = [{a,aa},{b,bb},{c,cc}],
     [
         {setup, 
             %Setup
@@ -794,6 +797,22 @@ galaxy_game_misc_test_() ->
             fun (ok) -> galaxy_game:teardown_universe(P) end,
             %Tests
             fun (ok) -> [?_assertEqual([uranus], galaxy_game:simulate_attack(P, [{nuclear,mercury},{laser, venus},{laser,uranus} ]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(P, [], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(P) end,
+            %Tests
+            fun (ok) -> [?_assertEqual(P, galaxy_game:simulate_attack(P, []))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(MP, MS, MA) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(MP) end,
+            %Tests
+            fun (ok) -> [?_assertEqual(MP, galaxy_game:simulate_attack(MP, []))] end
         }
     ].
 

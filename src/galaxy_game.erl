@@ -99,27 +99,28 @@ simulate_attack(Planets, Actions) ->
 			exit(whereis(Planet), Attack)
 		end
 		, Actions),
-	Survivors = handle_combat_responses(PlanetMap, Planets),
+	Victims = handle_combat_responses(PlanetMap, []),
+	Survivors = lists:subtract(Planets,Victims),
 	unregister(simulation),
 	lists:map(
 		fun(Planet) ->
 			{_,{_,Ref}} = Planet,
 			demonitor(Ref,[flush])
 		end, PlanetMap),
-    lists:usort(Survivors).
+    Survivors.
 
-handle_combat_responses(Planets, Survivors) ->
+handle_combat_responses(Planets, Victims) ->
 	receive
 		{'DOWN', _, process, From, Reason} -> 
 			{Name,_} = proplists:get_value(From, Planets),
 			io:format("Planet ~p died because ~p ~n", [Name, Reason]),
-			handle_combat_responses(Planets, lists:delete(Name, Survivors));
+			handle_combat_responses(Planets, [Name|Victims]);
 		Msg ->
 			io:format("Got unknown message ~p ~n", [Msg]),
-			handle_combat_responses(Planets, Survivors)
+			handle_combat_responses(Planets, Victims)
 	after
 		1 ->
-			Survivors
+			Victims
 	end.
 
 spawn_planet() ->
