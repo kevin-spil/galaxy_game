@@ -36,8 +36,20 @@
 -spec setup_universe([planet()], [shield()], [alliance()]) -> ok.
 %% @end
 setup_universe(Planets, Shields, Alliances) ->
-	MainPID = self(),
-	lists:map(fun(Planet) -> PID = spawn(fun() -> spawn_planet(MainPID) end), register(Planet, PID)  end, Planets),
+	lists:map(
+		fun(Planet) ->
+			PID = spawn(
+				fun() -> 
+					spawn_planet()
+				end
+			),
+			case whereis(Planet) of
+				undefined -> 
+					register(Planet, PID);
+				_ ->
+					exit({not_cleaned_up, Planet})
+			end
+		end, Planets),
 	lists:map(fun(PlanetToShield) -> PlanetToShield ! {shield, true} end, Shields),
 	lists:map(fun(Alliance) -> {Planet1, Planet2} = Alliance, Planet1 ! {alliance, Planet2} end, Alliances),
 	
@@ -67,11 +79,13 @@ teardown_universe(Planets) ->
 			 	case is_process_alive(Pid) of
 			 		true -> Planet ! {self(),teardown},
 						receive
-							{_, dead} -> killed
+							{_, dead} -> ok;
+							_ -> exit(improper_shutdown)
 						after
 							5000 -> exit(timeout)
 						end;
-					false -> already_dead
+					false -> exit(Pid, kill),
+							unregister(Planet)
 				end
 		end
 	end, Planets),
@@ -84,18 +98,44 @@ teardown_universe(Planets) ->
 -spec simulate_attack([planet()], [attack()]) -> Survivors::[planet()].
 %% @end
 simulate_attack(Planets, Actions) ->
-	lists:map(fun(Action) -> {Attack, Planet} = Action, exit(whereis(Planet), Attack) end, Actions),
-	timer:sleep(100),
-	Survivors = lists:foldl(
-		fun(Planet, Survivors) -> 
-			case whereis(Planet) of 
-				undefined -> io:format("Planet ~p died. ~n", [Planet]), Survivors;
-				_ -> [Planet|Survivors] 
-			end
-		end, [], Planets),
-    lists:reverse(Survivors).
+	register(simulation,self()),
+	PlanetMap = lists:foldl(
+		fun(Planet, Acc) -> 
+			PID = whereis(Planet),
+			MRef = monitor(process,PID),
+			[{PID, {Planet,MRef}}|Acc]
+		end, [], Planets
+		),
+	lists:map(
+		fun(Action) -> 
+			{Attack, Planet} = Action, 
+			exit(whereis(Planet), Attack)
+		end
+		, Actions),
+	Survivors = handle_combat_responses(PlanetMap, Planets),
+	unregister(simulation),
+	lists:map(
+		fun(Planet) ->
+			{_,{_,Ref}} = Planet,
+			demonitor(Ref,[flush])
+		end, PlanetMap),
+    lists:usort(Survivors).
 
-spawn_planet(ParentID) ->
+handle_combat_responses(Planets, Survivors) ->
+	receive
+		{'DOWN', _, process, From, Reason} -> 
+			{Name,_} = proplists:get_value(From, Planets),
+			io:format("Planet ~p died because ~p ~n", [Name, Reason]),
+			handle_combat_responses(Planets, lists:delete(Name, Survivors));
+		Msg ->
+			io:format("Got unknown message ~p ~n", [Msg]),
+			handle_combat_responses(Planets, Survivors)
+	after
+		10 ->
+			Survivors
+	end.
+
+spawn_planet() ->
 	receive
 		{Parent, ping} ->
 			Parent ! {self(), pong};
@@ -109,20 +149,33 @@ spawn_planet(ParentID) ->
 			io:format("Got exit signal. ~n"),
 			From ! {self(), dead},
 			exit(kill);
-		{'EXIT', _, nuclear} ->
+		{'EXIT', From, nuclear} ->
 			io:format("Nuked :( ~n"),
-			exit(kill);
-		{'EXIT', From, laser} ->
-			case From of
-				ParentID ->
-					io:format("Laser from main, ignored.~n");
+			case get_registered_name(From) of
+				simulation ->
+					io:format("Noes! Planet ~p got hit by a nuclear missile. ~n", [get_registered_name(self())]),
+					exit(kill);
 				_ ->
-					io:format("Ally ~p died because it got hit by a laser. This planet dies as well. ~n",[From]),
-					exit(kill)
+					io:format("Ally got hit :/ ~n")
+			end;
+		{'EXIT', From, laser} ->
+			case get_registered_name(From) of
+				simulation ->
+					io:format("Direct laser hit! Luckily we have shields.~n");
+				_ ->
+					io:format("Ally ~p died because it got hit by a laser. Planet ~p has a shield. ~n",[From,get_registered_name(self())])
 			end;			
 		{'EXIT', _, Msg} ->
 			io:format("Received and ignored exit type ~p ~n", [Msg]);
 		Msg ->
 			io:format("Got unknown message: ~p ~n", [Msg])
 	end,
-	spawn_planet(ParentID).
+	spawn_planet().
+
+get_registered_name(Pid) ->
+	case process_info(Pid, registered_name) of
+		{registered_name, Name} ->
+			Name;
+		undefined ->
+			unknown_process
+	end.
