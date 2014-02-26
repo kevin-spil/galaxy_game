@@ -131,7 +131,7 @@ handle_combat_responses(Planets, Survivors) ->
 			io:format("Got unknown message ~p ~n", [Msg]),
 			handle_combat_responses(Planets, Survivors)
 	after
-		10 ->
+		1 ->
 			Survivors
 	end.
 

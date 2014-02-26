@@ -188,18 +188,602 @@ galaxy_game_alliance_laser_test_() ->
             fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
             %Tests
             fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
-        },
-        %stuff
-        {setup, 
-            %Setup
-            fun () -> galaxy_game:setup_universe([a,b], [a], []) end,
-            %Teardown
-            fun (ok) -> galaxy_game:teardown_universe([a,b]) end,
-            %Tests
-            fun (ok) -> [?_assertEqual([], galaxy_game:simulate_attack([a,b], [{nuclear,a}, {nuclear,b}]))] end
         }
     ].
-
+galaxy_game_alliance_one_shield_laser_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        % Basic alliance laser test (As-B)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        % (A-Bs)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        %(As-C)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        %(A-Cs)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        %(Bs-C)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        %(B-Cs)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        }
+    ].
+galaxy_game_alliance_two_shield_laser_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        % Basic alliance laser test
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b,c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b,c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b,c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{laser,a}]))] end
+        }
+    ].
+galaxy_game_basic_nuclear_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        }
+    ].
+galaxy_game_shielded_nuclear_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b,c], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b,c], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b,c], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        }
+    ].
+galaxy_game_alliance_nuclear_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        % Basic alliance laser test
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        }
+    ].
+galaxy_game_alliance_one_shield_nuclear_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        % (As-B)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        % (A-Bs)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        %(As-C)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        %(A-Cs)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        %(Bs-C)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        %(B-Cs)
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        }
+    ].
+galaxy_game_alliance_two_shield_nuclear_test_() ->
+    ABCPlanets = [a,b,c],
+    [
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,b], [{a,b}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [a,c], [{a,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b,c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,b], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,c}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b,c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,b}]))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(ABCPlanets, [b,c], [{b,c}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(ABCPlanets) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
+        }
+    ].
 %%==============================================================================
 %% Internal Functions
 %%==============================================================================
