@@ -784,6 +784,19 @@ galaxy_game_alliance_two_shield_nuclear_test_() ->
             fun (ok) -> [?_assertEqual([b,c], galaxy_game:simulate_attack(ABCPlanets, [{nuclear,a}]))] end
         }
     ].
+galaxy_game_misc_test_() ->
+    P = [mercury,uranus,venus,earth],
+    [
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe(P, [mercury,uranus], [{mercury,uranus}, {venus,earth}]) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe(P) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([uranus], galaxy_game:simulate_attack(P, [{nuclear,mercury},{laser, venus},{laser,uranus} ]))] end
+        }
+    ].
+
 %%==============================================================================
 %% Internal Functions
 %%==============================================================================

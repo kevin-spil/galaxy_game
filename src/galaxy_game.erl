@@ -36,20 +36,7 @@
 -spec setup_universe([planet()], [shield()], [alliance()]) -> ok.
 %% @end
 setup_universe(Planets, Shields, Alliances) ->
-	lists:map(
-		fun(Planet) ->
-			PID = spawn(
-				fun() -> 
-					spawn_planet()
-				end
-			),
-			case whereis(Planet) of
-				undefined -> 
-					register(Planet, PID);
-				_ ->
-					exit({not_cleaned_up, Planet})
-			end
-		end, Planets),
+	lists:map(fun(Planet) -> PID = spawn(fun() -> spawn_planet() end), register(Planet, PID) end, Planets),
 	lists:map(fun(PlanetToShield) -> PlanetToShield ! {shield, true} end, Shields),
 	lists:map(fun(Alliance) -> {Planet1, Planet2} = Alliance, Planet1 ! {alliance, Planet2} end, Alliances),
 	
