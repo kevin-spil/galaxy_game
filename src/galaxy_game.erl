@@ -115,7 +115,11 @@ simulate_attack(Planets, Actions) ->
 			exit(whereis(Planet), Attack)
 		end
 		, Actions),
-	Victims = handle_combat_responses(PlanetMap, []),
+	%{_,_,HandleStart} = os:timestamp(),
+	Victims = handle_combat_responses(PlanetMap, [], 1),
+	%{_,_,HandleEnd} = os:timestamp(),
+	%Diff = HandleEnd - HandleStart,
+	%io:format("HandleCombatResponses: ~p Units ~n", [Diff]),
 	Survivors = lists:subtract(Planets,Victims),
 	unregister(simulation),
 	lists:map(
@@ -125,17 +129,14 @@ simulate_attack(Planets, Actions) ->
 		end, PlanetMap),
     Survivors.
 
-handle_combat_responses(Planets, Victims) ->
+handle_combat_responses(Planets, Victims, Timeout) ->
 	receive
 		{'DOWN', _, process, From, Reason} -> 
 			{Name,_} = proplists:get_value(From, Planets),
 			io:format("Planet ~p died because ~p ~n", [Name, Reason]),
-			handle_combat_responses(Planets, [Name|Victims]);
-		Msg ->
-			io:format("Got unknown message ~p ~n", [Msg]),
-			handle_combat_responses(Planets, Victims)
+			handle_combat_responses(Planets, [Name|Victims], 0)
 	after
-		1 ->
+		Timeout ->
 			Victims
 	end.
 
@@ -154,7 +155,6 @@ spawn_planet() ->
 			From ! {self(), dead},
 			exit(kill);
 		{'EXIT', From, nuclear} ->
-			io:format("Nuked :( ~n"),
 			case get_registered_name(From) of
 				simulation ->
 					io:format("Noes! Planet ~p got hit by a nuclear missile. ~n", [get_registered_name(self())]),
