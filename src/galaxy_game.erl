@@ -78,18 +78,8 @@ teardown_universe(Planets) ->
 		case whereis(Planet) of
 			undefined -> already_dead;
 			Pid ->
-			 	case is_process_alive(Pid) of
-			 		true -> Planet ! {self(),teardown},
-						receive
-							{_, dead} -> ok;
-							_ -> exit(improper_shutdown)
-						after
-							5000 -> exit(timeout)
-						end;
-					false -> 
-						exit(Pid, kill),
-						unregister(Planet)
-				end
+				unregister(Planet),
+				exit(Pid, kill)
 		end
 	end, Planets),
     ok.
