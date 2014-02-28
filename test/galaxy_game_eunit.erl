@@ -813,6 +813,14 @@ galaxy_game_misc_test_() ->
             fun (ok) -> galaxy_game:teardown_universe(MP) end,
             %Tests
             fun (ok) -> [?_assertEqual(MP, galaxy_game:simulate_attack(MP, []))] end
+        },
+        {setup, 
+            %Setup
+            fun () -> galaxy_game:setup_universe([a], [], []) end,
+            %Teardown
+            fun (ok) -> galaxy_game:teardown_universe([a]) end,
+            %Tests
+            fun (ok) -> [?_assertEqual([a], galaxy_game:simulate_attack([a], []))] end
         }
     ].
 
