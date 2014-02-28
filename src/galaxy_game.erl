@@ -74,15 +74,23 @@ setup_universe(Planets, Shields, Alliances) ->
 -spec teardown_universe([planet()]) -> ok.
 %% @end
 teardown_universe(Planets) ->
-	lists:map(fun(Planet) -> 
-		case whereis(Planet) of
-			undefined -> already_dead;
-			Pid ->
-				unregister(Planet),
-				exit(Pid, kill)
-		end
-	end, Planets),
+	kill_planets(Planets),
     ok.
+
+kill_planets(AlivePlanets) ->
+	case AlivePlanets of
+		[] -> 
+			ok;
+		List ->
+			Planet = hd(List),
+			case whereis(Planet) of
+				undefined -> 
+					kill_planets(lists:delete(Planet,AlivePlanets));
+				Pid -> 
+					exit(Pid, kill),
+					kill_planets(AlivePlanets)
+			end
+	end.
 
 %% @doc Simulate an attack.
 %% This function will only be called after setting up a universe with the same
