@@ -110,7 +110,10 @@ simulate_attack(Planets, Actions) ->
 	lists:map(
 		fun(Action) -> 
 			{Attack, Planet} = Action, 
-			exit(whereis(Planet), Attack)
+			case whereis(Planet) of
+				undefined -> ok;
+				Pid -> exit(Pid, Attack)
+			end			
 		end
 		, Actions),
 	%{_,_,HandleStart} = os:timestamp(),
