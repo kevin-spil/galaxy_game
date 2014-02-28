@@ -116,7 +116,7 @@ simulate_attack(Planets, Actions) ->
 		end
 		, Actions),
 	%{_,_,HandleStart} = os:timestamp(),
-	Victims = handle_combat_responses(PlanetMap, [], 1),
+	Victims = handle_combat_responses(PlanetMap, [], 10),
 	%{_,_,HandleEnd} = os:timestamp(),
 	%Diff = HandleEnd - HandleStart,
 	%io:format("HandleCombatResponses: ~p Units ~n", [Diff]),
@@ -134,7 +134,7 @@ handle_combat_responses(Planets, Victims, Timeout) ->
 		{'DOWN', _, process, From, Reason} -> 
 			{Name,_} = proplists:get_value(From, Planets),
 			io:format("Planet ~p died because ~p ~n", [Name, Reason]),
-			handle_combat_responses(Planets, [Name|Victims], 0)
+			handle_combat_responses(Planets, [Name|Victims], 10)
 	after
 		Timeout ->
 			Victims
@@ -176,10 +176,15 @@ spawn_planet() ->
 	end,
 	spawn_planet().
 
-get_registered_name(Pid) ->
-	case process_info(Pid, registered_name) of
-		{registered_name, Name} ->
-			Name;
-		undefined ->
+get_registered_name(Pid) when is_pid(Pid) ->
+	case is_process_alive(Pid) of
+		true ->
+			case process_info(Pid, registered_name) of
+				{registered_name, Name} ->
+					Name;
+				undefined ->
+					unknown_process
+			end;
+		_ ->
 			unknown_process
 	end.
